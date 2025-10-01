@@ -1,4 +1,5 @@
 from flask import Flask, url_for, request, json, Response, jsonify
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -86,6 +87,35 @@ def api_users(userid):
     else:
         return not_found()
 
+def check_auth(username, password):
+    return username == 'admin' and password == 'secret'
+
+def authenticate():
+    message = {'message': "Authenticate."}
+    resp = jsonify(message)
+
+    resp.status_code = 401
+    resp.headers['WWW-Authenticate'] = 'Basic realm="Example"'
+
+    return resp
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth:
+            return authenticate()
+        
+        elif not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    
+    return decorated
+
+@app.route('/secrets')
+@requires_auth
+def api_secret():
+    return "This is my top secret stuff"
 
 if __name__ == '__main__':
     app.run()
