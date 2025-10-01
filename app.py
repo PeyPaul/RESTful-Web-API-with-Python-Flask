@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, json
+from flask import Flask, url_for, request, json, Response, jsonify
 
 app = Flask(__name__)
 
@@ -50,6 +50,21 @@ def api_message():
     
     else:
         return "415 Unsupported Media Type"
+    
+@app.route('/response', methods = ['GET'])
+def api_response():
+    data ={
+        'hello' : 'world',
+        'number' : 3
+    }
+    js = json.dumps(data)
+
+    #resp = Response(js, status=200, mimetype='application/json')
+    resp = jsonify(data)
+    resp.status_code = 200
+    resp.headers['Link'] = 'https://fr.boardgamearena.com/'
+
+    return resp
 
 
 if __name__ == '__main__':
