@@ -5,7 +5,7 @@ from models import Contact
 @app.route("/contacts", methods=["GET"])
 def get_contacts():
     contacts = Contact.query.all()
-    json_contacts = list(map(lambda x: x.to_json, contacts))
+    json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
 
 @app.route("/create_contact", methods=["POST"])
@@ -41,9 +41,9 @@ def update_contact(user_id):
 
     db.session.commit()
 
-    return jsonify({"message": "User updates"}), 200
+    return jsonify({"message": "User updated"}), 200
 
-@app.route("/delete_contact/<int:user_id>", methods=["DELEZTE"])
+@app.route("/delete_contact/<int:user_id>", methods=["DELETE"])
 def delete_contact(user_id):
     contact = Contact.query.get(user_id)
 

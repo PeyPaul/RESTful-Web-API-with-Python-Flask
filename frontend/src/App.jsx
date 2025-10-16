@@ -4,7 +4,8 @@ import './App.css'
 import ContactForm from './ContactForm'
 
 function App() {
-  const [contacts, setContacts] = useState([])
+  const [contacts, setContacts] = useState([{"firstName": "firstfirstfirstfirstfirst","lastName": "last","email":"my email", id: 1}])
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     fetchContacts()
@@ -17,10 +18,28 @@ function App() {
     console.log(data.contacts)
   }
 
-  return <>
-    <ContactList contacts={contacts} />
-    <ContactForm/>
+  const closeModal = () => {
+    setIsModalOpen(false)
+  }
+
+  const openCreateModal = () => {
+    if (!isModalOpen) setIsModalOpen(true)
+  }
+
+  return (
+    <>
+      <ContactList contacts={contacts} />
+      <button onClick={openCreateModal}>Create New Contact</button>
+      { isModalOpen && <div className="modal">
+      <div className="modal-content">
+        <span className="close" onClick={closeModal}>&times;</span>
+        <ContactForm />
+
+        </div>
+      </div>
+      }
     </>
+  )
 }
 
 export default App
